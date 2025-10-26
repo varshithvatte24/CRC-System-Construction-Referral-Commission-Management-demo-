@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CRC System — Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar panel">
+      <div class="brand-row">
+        <div class="logo">CRC</div>
+        <div>
+          <h2>CRC System</h2>
+          <div class="muted small">Referral & Commission</div>
+        </div>
+      </div>
+
+      <div class="profile-mini">
+        <div class="avatar" id="avatar">--</div>
+        <div>
+          <div id="display-name">Not signed in</div>
+          <div class="muted small" id="display-role">—</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-link active" data-view="overview" href="#overview">Overview</a>
+        <a class="nav-link" data-view="projects" href="#projects">Projects</a>
+        <a class="nav-link" data-view="leads" href="#leads">Leads</a>
+        <a class="nav-link" data-view="profile" href="#profile">Profile</a>
+        <a class="nav-link" data-view="settings" href="#settings">Settings</a>
+      </nav>
+
+      <div class="sidebar-actions">
+        <button id="btn-switch" class="btn">Switch user</button>
+        <button id="btn-logout" class="btn danger">Logout</button>
+      </div>
+
+      <div class="sidebar-stats">
+        <div><small class="muted">Users</small><div id="s-users">0</div></div>
+        <div><small class="muted">Projects</small><div id="s-projects">0</div></div>
+      </div>
+    </aside>
+
+    <main class="main panel">
+      <header class="main-head">
+        <div>
+          <h1 id="page-title">Overview</h1>
+          <p class="muted small" id="page-desc">Realtime dashboard</p>
+        </div>
+        <div class="search-row">
+          <input id="global-search" placeholder="Search projects, leads, users..." />
+          <button id="btn-new" class="btn primary">New</button>
+        </div>
+      </header>
+
+      <section id="view-area" class="view-area">
+        <!-- content injected by app.js -->
+      </section>
+    </main>
+
+    <aside class="rightpanel panel">
+      <div class="feed-head">
+        <h3>Live feed</h3>
+        <div id="bc-status" class="pill">offline</div>
+      </div>
+      <div id="feed" class="list"></div>
+
+      <hr>
+
+      <div class="quick-list">
+        <h4>Quick actions</h4>
+        <button id="quick-add-lead" class="btn">Add lead</button>
+        <button id="quick-add-project" class="btn">Add project</button>
+      </div>
+    </aside>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CRC System — Sign in</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="center-shell">
+    <div class="auth-card">
+      <div class="brand">
+        <div class="logo">CRC</div>
+        <div>
+          <h1>CRC System</h1>
+          <p class="tag">Construction Referral & Commission Management</p>
+        </div>
+      </div>
+
+      <div id="auth-forms" class="forms">
+        <section id="form-register">
+          <h2>Create account</h2>
+          <form id="register-form" autocomplete="off" onsubmit="return false;">
+            <label>Full name
+              <input id="reg-name" type="text" placeholder="Jane Doe" />
+            </label>
+            <label>Email
+              <input id="reg-email" type="email" placeholder="jane@example.com" />
+            </label>
+            <label>Role
+              <select id="reg-role">
+                <option value="customer">Customer</option>
+                <option value="referrer">Referrer</option>
+                <option value="admin">Admin / Contractor</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button id="btn-register" class="btn">Register</button>
+            </div>
+          </form>
+        </section>
+
+        <section id="form-login">
+          <h2>Login</h2>
+          <form id="login-form" onsubmit="return false;">
+            <label>Email
+              <input id="login-email" type="email" placeholder="registered email" required />
+            </label>
+            <div class="form-actions">
+              <button id="btn-login" class="btn primary">Login</button>
+            </div>
+            <p class="muted small">After login you will be redirected to the Dashboard.</p>
+          </form>
+        </section>
+      </div>
+
+      <div class="quick">
+        <button id="btn-open-dashboard" class="btn ghost">Open Demo Dashboard</button>
+        <button id="btn-clear-data" class="btn tiny">Clear demo data</button>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="data.js"></script>
+  <script>
+    // index page logic: register / login -> set session -> redirect to dashboard.html
+    (function(){
+      const toastEl = document.getElementById('toast');
+      let toastTimer = null;
+      function toast(msg, ms=2500){
+        clearTimeout(toastTimer);
+        toastEl.textContent = msg;
+        toastEl.classList.remove('hidden');
+        toastTimer = setTimeout(()=>toastEl.classList.add('hidden'), ms);
+      }
+
+      // wire buttons
+      document.getElementById('btn-register').addEventListener('click', () => {
+        const name = document.getElementById('reg-name').value.trim();
+        const email = document.getElementById('reg-email').value.trim().toLowerCase();
+        const role = document.getElementById('reg-role').value;
+        if(!name || !email) return toast('Name and email required');
+        const res = CRCData.registerUser({ name, email, role });
+        if (res.error) return toast(res.error);
+        toast('Registered — now login');
+        // prefill login
+        document.getElementById('login-email').value = email;
+      });
+
+      document.getElementById('btn-login').addEventListener('click', () => {
+        const email = document.getElementById('login-email').value.trim().toLowerCase();
+        if(!email) return toast('Enter email');
+        const res = CRCData.loginUser(email);
+        if (res.error) return toast(res.error);
+        toast('Welcome ' + res.user.name);
+        // redirect to dashboard
+        setTimeout(()=> location.href = 'dashboard.html', 500);
+      });
+
+      // demo quick open (seed + pick a user)
+      document.getElementById('btn-open-dashboard').addEventListener('click', () => {
+        CRCData.seedDemo();
+        // pick first seeded user for convenience
+        const users = CRCData.read(KEYS.users, []);
+        if (users.length) {
+          CRCData.setSession(users[0]);
+          location.href = 'dashboard.html';
+        } else {
+          toast('Could not open demo');
+        }
+      });
+
+      document.getElementById('btn-clear-data').addEventListener('click', () => {
+        if (!confirm('Clear all demo data from localStorage?')) return;
+        CRCData.clearAll();
+        toast('Cleared data. Reload page.');
+      });
+
+      // if session already present, redirect
+      const session = CRCData.getSession();
+      if (session) {
+        location.href = 'dashboard.html';
+      }
+    })();
+  </script>
+</body>
+</html>
